@@ -36,27 +36,33 @@ class NotesListViewController: UIViewController, UITableViewDataSource {
         
         
         
-        let fetchrequest:NSFetchRequest<Note> = Note.fetchRequest()
-  let predicate = NSPredicate(format: "notebook == %@", notebook)
-        fetchrequest.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "creadtionDate", ascending: true)
-      fetchrequest.sortDescriptors = [sortDescriptor]
-        fetechedResultController = NSFetchedResultsController(fetchRequest: fetchrequest, managedObjectContext: dataControler.viewContext, sectionNameKeyPath: nil, cacheName: "notes")
-        fetechedResultController.delegate = self
+
         
-        do {
-       try  fetechedResultController.performFetch()
-        }catch {
-            fatalError("sorry no performFetch")
-        }
-        
-        
+               setupFetchedResultsController()
         updateEditButtonState()
+    }
+    
+    func setupFetchedResultsController(){
+        
+              let fetchrequest:NSFetchRequest<Note> = Note.fetchRequest()
+        let predicate = NSPredicate(format: "notebook == %@", notebook)
+              fetchrequest.predicate = predicate
+              let sortDescriptor = NSSortDescriptor(key: "creadtionDate", ascending: true)
+            fetchrequest.sortDescriptors = [sortDescriptor]
+              fetechedResultController = NSFetchedResultsController(fetchRequest: fetchrequest, managedObjectContext: dataControler.viewContext, sectionNameKeyPath: nil, cacheName: "notes")
+              fetechedResultController.delegate = self
+              
+              do {
+             try  fetechedResultController.performFetch()
+              }catch {
+                  fatalError("sorry no performFetch")
+              }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+       setupFetchedResultsController()
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: false)
             tableView.reloadRows(at: [indexPath], with: .fade)
